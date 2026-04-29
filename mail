@@ -1,0 +1,99 @@
+Private WithEvents olItems1 As Outlook.Items
+Private WithEvents olItems2 As Outlook.Items
+Private WithEvents olItems3 As Outlook.Items
+Private WithEvents olItems4 As Outlook.Items
+Private WithEvents olItems5 As Outlook.Items
+Private WithEvents olItems6 As Outlook.Items
+Private WithEvents olItems7 As Outlook.Items
+Private WithEvents olItems8 As Outlook.Items
+Private WithEvents olItems9 As Outlook.Items
+Private WithEvents olItems10 As Outlook.Items
+Private WithEvents olItems11 As Outlook.Items
+
+Private Sub Application_Startup()
+    Dim ns As Outlook.NameSpace
+    
+    Set ns = Application.GetNamespace("MAPI")
+    
+    ' 🔥 PODAJ SWOJE FOLDERY
+    Set olItems1 = ns.GetDefaultFolder(olFolderInbox).Folders("Folder1").Items
+    Set olItems2 = ns.GetDefaultFolder(olFolderInbox).Folders("Folder2").Items
+    Set olItems3 = ns.GetDefaultFolder(olFolderInbox).Folders("Folder3").Items
+    Set olItems4 = ns.GetDefaultFolder(olFolderInbox).Folders("Folder4").Items
+    Set olItems5 = ns.GetDefaultFolder(olFolderInbox).Folders("Folder5").Items
+    Set olItems6 = ns.GetDefaultFolder(olFolderInbox).Folders("Folder6").Items
+    Set olItems7 = ns.GetDefaultFolder(olFolderInbox).Folders("Folder7").Items
+    Set olItems8 = ns.GetDefaultFolder(olFolderInbox).Folders("Folder8").Items
+    Set olItems9 = ns.GetDefaultFolder(olFolderInbox).Folders("Folder9").Items
+    Set olItems10 = ns.GetDefaultFolder(olFolderInbox).Folders("Folder10").Items
+    Set olItems11 = ns.GetDefaultFolder(olFolderInbox).Folders("Folder11").Items
+
+    ' 🔥 PRZELOT PO STARYCH MAILACH
+    ProcessFolder ns.GetDefaultFolder(olFolderInbox).Folders("Folder1")
+    ProcessFolder ns.GetDefaultFolder(olFolderInbox).Folders("Folder2")
+    ProcessFolder ns.GetDefaultFolder(olFolderInbox).Folders("Folder3")
+    ProcessFolder ns.GetDefaultFolder(olFolderInbox).Folders("Folder4")
+    ProcessFolder ns.GetDefaultFolder(olFolderInbox).Folders("Folder5")
+    ProcessFolder ns.GetDefaultFolder(olFolderInbox).Folders("Folder6")
+    ProcessFolder ns.GetDefaultFolder(olFolderInbox).Folders("Folder7")
+    ProcessFolder ns.GetDefaultFolder(olFolderInbox).Folders("Folder8")
+    ProcessFolder ns.GetDefaultFolder(olFolderInbox).Folders("Folder9")
+    ProcessFolder ns.GetDefaultFolder(olFolderInbox).Folders("Folder10")
+    ProcessFolder ns.GetDefaultFolder(olFolderInbox).Folders("Folder11")
+End Sub
+
+' 🔥 EVENTY DLA KAŻDEGO FOLDERU
+Private Sub olItems1_ItemAdd(ByVal Item As Object): Handle Item: End Sub
+Private Sub olItems2_ItemAdd(ByVal Item As Object): Handle Item: End Sub
+Private Sub olItems3_ItemAdd(ByVal Item As Object): Handle Item: End Sub
+Private Sub olItems4_ItemAdd(ByVal Item As Object): Handle Item: End Sub
+Private Sub olItems5_ItemAdd(ByVal Item As Object): Handle Item: End Sub
+Private Sub olItems6_ItemAdd(ByVal Item As Object): Handle Item: End Sub
+Private Sub olItems7_ItemAdd(ByVal Item As Object): Handle Item: End Sub
+Private Sub olItems8_ItemAdd(ByVal Item As Object): Handle Item: End Sub
+Private Sub olItems9_ItemAdd(ByVal Item As Object): Handle Item: End Sub
+Private Sub olItems10_ItemAdd(ByVal Item As Object): Handle Item: End Sub
+Private Sub olItems11_ItemAdd(ByVal Item As Object): Handle Item: End Sub
+
+' 🔥 GŁÓWNA LOGIKA
+Private Sub Handle(mail As Object)
+    If TypeOf mail Is Outlook.MailItem Then
+        ProcessMail mail
+    End If
+End Sub
+
+Private Sub ProcessMail(mail As Outlook.MailItem)
+
+    ' tylko nieprzeczytane
+    If mail.UnRead = True Then
+        
+        ' bez duplikatów
+        If InStr(mail.Categories, "FORWARDED") = 0 Then
+            
+            Dim fwd As Outlook.MailItem
+            Set fwd = mail.Forward
+            
+            ' 🔥 TU TWÓJ MAIL
+            fwd.Recipients.Add "mail@twojadomena.pl"
+            
+            fwd.Send
+            
+            ' oznacz jako przetworzony
+            mail.Categories = mail.Categories & ";FORWARDED"
+            mail.Save
+            
+        End If
+    End If
+
+End Sub
+
+' 🔥 PRZELOT PO STARYCH MAILACH
+Private Sub ProcessFolder(folder As Outlook.MAPIFolder)
+    Dim item As Object
+    
+    For Each item In folder.Items
+        If TypeOf item Is Outlook.MailItem Then
+            ProcessMail item
+        End If
+    Next
+End Sub

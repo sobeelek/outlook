@@ -1,8 +1,7 @@
-Sub SaveAndPrintPDFs_Adobe()
+Sub SaveOpenAndPrintPDFs()
 
     Dim objItem As Object
     Dim objMail As Outlook.MailItem
-    Dim objAttachments As Outlook.Attachments
     Dim objAttachment As Outlook.Attachment
     Dim saveFolder As String
     Dim filePath As String
@@ -10,13 +9,18 @@ Sub SaveAndPrintPDFs_Adobe()
     Dim i As Integer
     Dim adobePath As String
     
-    ' Ścieżka do Adobe
-    adobePath = "C:\Program Files\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe"
+    ' 🔎 szuka Acrobata automatycznie
+    If Dir("C:\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe") <> "" Then
+        adobePath = "C:\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe"
+    ElseIf Dir("C:\Program Files (x86)\Adobe\Acrobat DC\Acrobat\Acrobat.exe") <> "" Then
+        adobePath = "C:\Program Files (x86)\Adobe\Acrobat DC\Acrobat\Acrobat.exe"
+    Else
+        MsgBox "Nie znaleziono Acrobata!"
+        Exit Sub
+    End If
     
-    ' Folder zapisu
     saveFolder = "C:\PDF_OUTLOOK\"
     
-    ' Tworzy folder jeśli nie istnieje
     If Dir(saveFolder, vbDirectory) = "" Then
         MkDir saveFolder
     End If
@@ -24,28 +28,24 @@ Sub SaveAndPrintPDFs_Adobe()
     For Each objItem In Application.ActiveExplorer.Selection
         
         If TypeOf objItem Is Outlook.MailItem Then
-            Set objMail = objItem
-            Set objAttachments = objMail.Attachments
             
-            For Each objAttachment In objAttachments
+            For Each objAttachment In objItem.Attachments
                 
                 If LCase(Right(objAttachment.FileName, 4)) = ".pdf" Then
                     
                     fileName = objAttachment.FileName
                     filePath = saveFolder & fileName
                     
-                    ' unikalna nazwa
                     i = 1
                     Do While Dir(filePath) <> ""
                         filePath = saveFolder & i & "_" & fileName
                         i = i + 1
                     Loop
                     
-                    ' zapis
                     objAttachment.SaveAsFile filePath
                     
-                    ' druk (cichy przez Adobe)
-                    Shell """" & adobePath & """ /t """ & filePath & """", vbHide
+                    ' 🔥 druk + otwarcie
+                    Shell """" & adobePath & """ /t """ & filePath & """", vbNormalFocus
                     
                 End If
                 
@@ -55,6 +55,6 @@ Sub SaveAndPrintPDFs_Adobe()
         
     Next
     
-    MsgBox "Gotowe! PDFy wydrukowane 🚀"
+    MsgBox "Gotowe 🚀"
 
 End Sub

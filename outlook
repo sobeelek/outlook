@@ -1,4 +1,4 @@
-Sub SaveAndPrintPDFs()
+Sub SaveAndPrintPDFs_Adobe()
 
     Dim objItem As Object
     Dim objMail As Outlook.MailItem
@@ -8,6 +8,10 @@ Sub SaveAndPrintPDFs()
     Dim filePath As String
     Dim fileName As String
     Dim i As Integer
+    Dim adobePath As String
+    
+    ' Ścieżka do Adobe Reader (sprawdź czy taka sama u Ciebie)
+    adobePath = "C:\Program Files\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe"
     
     ' Folder zapisu
     saveFolder = "C:\PDF_OUTLOOK\"
@@ -39,11 +43,11 @@ Sub SaveAndPrintPDFs()
                         i = i + 1
                     Loop
                     
-                    ' Zapis
+                    ' Zapis pliku
                     objAttachment.SaveAsFile filePath
                     
-                    ' Druk (używa domyślnej aplikacji PDF)
-                    Shell "cmd /c start /min """" """ & filePath & """", vbHide
+                    ' Druk przez Adobe (cichy)
+                    Shell """" & adobePath & """ /t """ & filePath & """", vbHide
                     
                 End If
                 
@@ -53,6 +57,6 @@ Sub SaveAndPrintPDFs()
         
     Next
     
-    MsgBox "Gotowe! PDFy zapisane i wysłane do druku 🚀"
+    MsgBox "Gotowe! PDFy wydrukowane 🚀"
 
 End Sub

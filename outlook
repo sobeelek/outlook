@@ -19,8 +19,10 @@ Sub SaveOpenAndPrintPDFs()
         Exit Sub
     End If
     
-    saveFolder = "C:\PDF_OUTLOOK\"
+    ' 📁 PULPIT
+    saveFolder = Environ("USERPROFILE") & "\Desktop\PDF_OUTLOOK\"
     
+    ' tworzy folder jeśli nie istnieje
     If Dir(saveFolder, vbDirectory) = "" Then
         MkDir saveFolder
     End If
@@ -44,7 +46,7 @@ Sub SaveOpenAndPrintPDFs()
                     
                     objAttachment.SaveAsFile filePath
                     
-                    ' 🔥 druk + otwarcie
+                    ' 🔥 otwiera + drukuje
                     Shell """" & adobePath & """ /t """ & filePath & """", vbNormalFocus
                     
                 End If

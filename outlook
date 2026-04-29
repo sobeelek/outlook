@@ -55,6 +55,6 @@ Sub SaveOpenAndPrintPDFs()
         
     Next
     
-    MsgBox "Gotowe 🚀"
+    MsgBox "Gotowe"
 
 End Sub

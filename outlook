@@ -1,0 +1,58 @@
+Sub SaveAndPrintPDFs()
+
+    Dim objItem As Object
+    Dim objMail As Outlook.MailItem
+    Dim objAttachments As Outlook.Attachments
+    Dim objAttachment As Outlook.Attachment
+    Dim saveFolder As String
+    Dim filePath As String
+    Dim fileName As String
+    Dim i As Integer
+    
+    ' Folder zapisu
+    saveFolder = "C:\PDF_OUTLOOK\"
+    
+    ' Tworzy folder jeśli nie istnieje
+    If Dir(saveFolder, vbDirectory) = "" Then
+        MkDir saveFolder
+    End If
+    
+    ' Przechodzi po zaznaczonych mailach
+    For Each objItem In Application.ActiveExplorer.Selection
+        
+        If TypeOf objItem Is Outlook.MailItem Then
+            Set objMail = objItem
+            Set objAttachments = objMail.Attachments
+            
+            For Each objAttachment In objAttachments
+                
+                ' Tylko PDF
+                If LCase(Right(objAttachment.FileName, 4)) = ".pdf" Then
+                    
+                    fileName = objAttachment.FileName
+                    filePath = saveFolder & fileName
+                    
+                    ' Jeśli plik istnieje → dodaj numer
+                    i = 1
+                    Do While Dir(filePath) <> ""
+                        filePath = saveFolder & i & "_" & fileName
+                        i = i + 1
+                    Loop
+                    
+                    ' Zapis
+                    objAttachment.SaveAsFile filePath
+                    
+                    ' Druk (używa domyślnej aplikacji PDF)
+                    Shell "cmd /c start /min """" """ & filePath & """", vbHide
+                    
+                End If
+                
+            Next
+            
+        End If
+        
+    Next
+    
+    MsgBox "Gotowe! PDFy zapisane i wysłane do druku 🚀"
+
+End Sub

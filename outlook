@@ -10,7 +10,7 @@ Sub SaveAndPrintPDFs_Adobe()
     Dim i As Integer
     Dim adobePath As String
     
-    ' Ścieżka do Adobe Reader (sprawdź czy taka sama u Ciebie)
+    ' Ścieżka do Adobe
     adobePath = "C:\Program Files\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe"
     
     ' Folder zapisu
@@ -21,7 +21,6 @@ Sub SaveAndPrintPDFs_Adobe()
         MkDir saveFolder
     End If
     
-    ' Przechodzi po zaznaczonych mailach
     For Each objItem In Application.ActiveExplorer.Selection
         
         If TypeOf objItem Is Outlook.MailItem Then
@@ -30,23 +29,22 @@ Sub SaveAndPrintPDFs_Adobe()
             
             For Each objAttachment In objAttachments
                 
-                ' Tylko PDF
                 If LCase(Right(objAttachment.FileName, 4)) = ".pdf" Then
                     
                     fileName = objAttachment.FileName
                     filePath = saveFolder & fileName
                     
-                    ' Jeśli plik istnieje → dodaj numer
+                    ' unikalna nazwa
                     i = 1
                     Do While Dir(filePath) <> ""
                         filePath = saveFolder & i & "_" & fileName
                         i = i + 1
                     Loop
                     
-                    ' Zapis pliku
+                    ' zapis
                     objAttachment.SaveAsFile filePath
                     
-                    ' Druk przez Adobe (cichy)
+                    ' druk (cichy przez Adobe)
                     Shell """" & adobePath & """ /t """ & filePath & """", vbHide
                     
                 End If
